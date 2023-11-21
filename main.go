@@ -8,7 +8,7 @@ import (
 	"net"
 
 	"google.golang.org/grpc"
-	pb "helloworld/helloworld" // Update with your actual module path
+	pb "github.com/Allan-Nava/GO-gRPC/helloworld/helloworld" // Update with your actual module path
 )
 
 
