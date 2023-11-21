@@ -7,7 +7,7 @@ on:
       - v*
 #
 jobs:
-    superset-docker:
+    docker:
       runs-on: ubuntu-latest
       permissions:
         contents: read
