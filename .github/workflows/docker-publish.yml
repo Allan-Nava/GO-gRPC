@@ -1,4 +1,4 @@
-name: Docker SuperSet LTS Keycloak
+name: Docker Go GRPC
 on:
   push:
     branches: 
