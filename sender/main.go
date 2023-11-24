@@ -22,10 +22,11 @@ package main
 import (
 	"context"
 	"flag"
+	helloworld "github.com/Allan-Nava/GO-gRPC/generated/helloworld.proto/proto"
+	start "github.com/Allan-Nava/GO-gRPC/generated/start.proto/proto"
 	"log"
 	"time"
 
-	pb "github.com/Allan-Nava/GO-gRPC/helloworld"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -41,20 +42,36 @@ var (
 
 func main() {
 	flag.Parse()
-	// Set up a connection to the server.
 	conn, err := grpc.Dial(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
-
-	// Contact the server and print out its response.
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: *name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+	starterServer := &server{
+		Client: helloworld.NewGreeterClient(conn),
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
+	start.RegisterStarterServer(grpc.NewServer(), starterServer)
+}
+
+type server struct {
+	start.UnimplementedStarterServer
+	Client helloworld.GreeterClient
+}
+
+func (s *server) Start(ctx context.Context, in *start.StartRequest) (*start.StartResponse, error) {
+	log.Printf("Received: %v", in.GetName())
+	go Send(s.Client)
+	return &start.StartResponse{Message: "Hello " + in.GetName()}, nil
+}
+
+func Send(c helloworld.GreeterClient) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	defer cancel()
+	for i := 0; i < 100; i++ {
+		r, err := c.SayHello(ctx, &helloworld.HelloRequest{Name: *name})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting: %s", r.GetMessage())
+	}
 }
