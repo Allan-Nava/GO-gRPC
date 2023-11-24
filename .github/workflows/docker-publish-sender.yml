@@ -1,4 +1,4 @@
-name: Docker Go GRPC
+name: Docker Sender Go GRPC
 on:
   push:
     branches: 
@@ -30,7 +30,7 @@ jobs:
           id: prep
           run: |
             REG=ghcr.io
-            IMAGE=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')
+            IMAGE=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')-sender
             DOCKER_IMAGE=${REG}/${IMAGE}
             VERSION=nool
             if [ "${{ github.event_name }}" = "schedule" ]; then
@@ -71,7 +71,7 @@ jobs:
           uses: docker/build-push-action@v4
           with:
             context: .
-            file: ./Dockerfile
+            file: ./sender-Dockerfile
             platforms: linux/amd64
             push: true
             tags: ${{ steps.prep.outputs.tags }}

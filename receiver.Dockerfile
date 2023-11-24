@@ -5,13 +5,12 @@ LABEL maintainer="allan.nava@hiway.media"
 WORKDIR /app
 COPY . .
 RUN go mod tidy
-RUN go build -o ./go-grpc . 
-#
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -a -o main receiver/main.go
 #
 FROM phusion/baseimage:focal-1.2.0
 WORKDIR /app
 #
 COPY --from=builder /app /app
 #
-CMD [ "./go-grpc" ]
+CMD [ "./main" ]
 #
