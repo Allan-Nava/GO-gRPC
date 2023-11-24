@@ -22,9 +22,11 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	helloworld "github.com/Allan-Nava/GO-gRPC/generated/helloworld.proto/proto"
 	start "github.com/Allan-Nava/GO-gRPC/generated/start.proto/proto"
 	"log"
+	"net"
 	"time"
 
 	"google.golang.org/grpc"
@@ -38,6 +40,7 @@ const (
 var (
 	addr = flag.String("addr", "localhost:50051", "the address to connect to")
 	name = flag.String("name", defaultName, "Name to greet")
+	port = flag.Int("port", 50052, "The server port")
 )
 
 func main() {
@@ -47,10 +50,20 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
+	}
+	s := grpc.NewServer()
 	starterServer := &server{
 		Client: helloworld.NewGreeterClient(conn),
 	}
-	start.RegisterStarterServer(grpc.NewServer(), starterServer)
+	start.RegisterStarterServer(s, starterServer)
+	log.Printf("server listening at %v", lis.Addr())
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 }
 
 type server struct {
