@@ -71,7 +71,7 @@ jobs:
           uses: docker/build-push-action@v4
           with:
             context: .
-            file: ./receiver-Dockerfile
+            file: ./receiver.Dockerfile
             platforms: linux/amd64
             push: true
             tags: ${{ steps.prep.outputs.tags }}
