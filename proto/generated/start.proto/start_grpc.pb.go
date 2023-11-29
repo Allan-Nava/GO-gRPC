@@ -16,7 +16,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.24.4
-// source: proto/start.proto
+// source: start.proto
 
 package start
 
@@ -119,5 +119,5 @@ var Starter_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "proto/start.proto",
+	Metadata: "start.proto",
 }

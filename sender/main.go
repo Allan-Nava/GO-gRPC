@@ -23,8 +23,8 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	helloworld "github.com/Allan-Nava/GO-gRPC/generated/helloworld.proto/proto"
-	start "github.com/Allan-Nava/GO-gRPC/generated/start.proto/proto"
+	helloworld2 "github.com/Allan-Nava/GO-gRPC/proto/generated/helloworld.proto"
+	start2 "github.com/Allan-Nava/GO-gRPC/proto/generated/start.proto"
 	"log"
 	"net"
 	"time"
@@ -57,9 +57,9 @@ func main() {
 	}
 	s := grpc.NewServer()
 	starterServer := &server{
-		Client: helloworld.NewGreeterClient(conn),
+		Client: helloworld2.NewGreeterClient(conn),
 	}
-	start.RegisterStarterServer(s, starterServer)
+	start2.RegisterStarterServer(s, starterServer)
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
@@ -67,21 +67,21 @@ func main() {
 }
 
 type server struct {
-	start.UnimplementedStarterServer
-	Client helloworld.GreeterClient
+	start2.UnimplementedStarterServer
+	Client helloworld2.GreeterClient
 }
 
-func (s *server) Start(ctx context.Context, in *start.StartRequest) (*start.StartResponse, error) {
+func (s *server) Start(ctx context.Context, in *start2.StartRequest) (*start2.StartResponse, error) {
 	log.Printf("Received: %v", in.GetName())
 	go Send(s.Client)
-	return &start.StartResponse{Message: "Hello " + in.GetName()}, nil
+	return &start2.StartResponse{Message: "Hello " + in.GetName()}, nil
 }
 
-func Send(c helloworld.GreeterClient) {
+func Send(c helloworld2.GreeterClient) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
 	defer cancel()
 	for i := 0; i < 100; i++ {
-		r, err := c.SayHello(ctx, &helloworld.HelloRequest{Name: *name})
+		r, err := c.SayHello(ctx, &helloworld2.HelloRequest{Name: *name})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}

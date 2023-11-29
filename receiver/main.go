@@ -23,7 +23,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	helloworld "github.com/Allan-Nava/GO-gRPC/generated/helloworld.proto/proto"
+	helloworld2 "github.com/Allan-Nava/GO-gRPC/proto/generated/helloworld.proto"
 	"log"
 	"net"
 
@@ -36,13 +36,13 @@ var (
 
 // server is used to implement helloworld.GreeterServer.
 type server struct {
-	helloworld.UnimplementedGreeterServer
+	helloworld2.UnimplementedGreeterServer
 }
 
 // SayHello implements helloworld.GreeterServer
-func (s *server) SayHello(ctx context.Context, in *helloworld.HelloRequest) (*helloworld.HelloReply, error) {
+func (s *server) SayHello(ctx context.Context, in *helloworld2.HelloRequest) (*helloworld2.HelloReply, error) {
 	log.Printf("Received: %v", in.GetName())
-	return &helloworld.HelloReply{Message: "Hello " + in.GetName()}, nil
+	return &helloworld2.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
 
 func main() {
@@ -52,7 +52,7 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	s := grpc.NewServer()
-	helloworld.RegisterGreeterServer(s, &server{})
+	helloworld2.RegisterGreeterServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

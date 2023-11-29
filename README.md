@@ -8,13 +8,9 @@ While still in the examples/helloworld directory, run the following command:
 
 
 ```
-ls proto | xargs -I {} mkdir generated/{}
-ls proto | xargs -I {} protoc --go_out=generated/{} --go_opt=paths=source_relative \
-    --go-grpc_out=generated/{} --go-grpc_opt=paths=source_relative \
+cd proto/models
+ls | xargs -I {} mkdir -p ../generated/{}
+ls | xargs -I {} protoc --go_out=../generated/{} --go_opt=paths=source_relative \
+    --go-grpc_out=../generated/{} --go-grpc_opt=paths=source_relative \
     {}
-
-
-
-
-
 ```
